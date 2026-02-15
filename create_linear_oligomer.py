@@ -2,9 +2,11 @@
 # Created: 10/10/2025
 
 # Generate an oligomer by adding n number of monomers on a stright line.
+# NOTE: This is not a blackbox program. Find your reference atom (ATOM1) and the distance 
+# of it from another reference atom (ATOM2) in the monomer.
 # We take glycine as an example, add n number of glycines to it.
-# Find the O in the C=O of COOH, here it is the 4th one (m=m1[3]). This in 2nd glycine 
-# should be close to N of first glycine. 
+# Find the O (ATOM1) in the C=O of COOH, here it is the 4th one (m = m1[3]). This in 2nd glycine 
+# should be close to N (ATOM2) of first glycine. 
 # get this O's coordinate by drawing it about 2.5 A away from N of first glycine in Avogadro.
 
 m2O = "O       -0.7049115307     -1.1265436717      1.8039367523"
@@ -37,17 +39,20 @@ def get_translation_vector(xyzfile):
     return m1
 
 # create oligomer
-def get_oligomers(n_oligomers, monomer):
+def get_oligomers(n_oligomers, monomer_name, xyzfile):
     
-    print("="*50, "\n Preparing oligomer coordinates for %s..." % monomer)
+    print("="*50, "\n Preparing oligomer coordinates for %s..." % monomer_name)
     print("="*50, "\n")
-    m1 = get_translation_vector('glycine.xyz')
-    m = m1[3].split(); mx, my, mz = float(m2O[1]), float(m2O[2]), float(m2O[3])
+    m1 = get_translation_vector(xyzfile)
+    # We choose the first O atom as the reference atom (ATOM1)
+    m = m1[3].split()
+    mx, my, mz = float(m2O[1]), float(m2O[2]), float(m2O[3])
+    # translation vectors along x, y & z axes
     d_x, d_y, d_z = float(m[1]) - mx, float(m[2]) - my, float(m[3]) - mz; #print(d_x)
     dict1 = {2: "2nd", 3: "3rd"}
     
     for times in range(1, n_oligomers):
-        print("-"*50,"\n Coordinates of", dict1.get(1 + times, "%2dth"%(1 + times)), monomer)
+        print("-"*50,"\n Coordinates of", dict1.get(1 + times, "%2dth"%(1 + times)), monomer_name)
         print("-"*50)
         for atom in m1:
             element, x, y, z = atom.split()
@@ -60,4 +65,4 @@ def get_oligomers(n_oligomers, monomer):
         print("\n")
         
 # run         
-get_oligomers(10, "glycine")
+get_oligomers(10, "glycine", "glycine.xyz")
